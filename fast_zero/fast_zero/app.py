@@ -15,7 +15,7 @@ async def home():
           response_model=UserPublic)
 async def create_user(user: UserSchema):
     user_with_id = UserDB(id=len(database)+1,
-                          **user.dict())
+                          **user.model_dump())
     database.append(user_with_id)
     return user_with_id
 
@@ -43,7 +43,7 @@ async def update_user(user_id: int, user: UserSchema):
             status_code=404, detail='User not foud'
         )
 
-    user_with_id = UserDB(id=user_id, **user.dict())
+    user_with_id = UserDB(id=user_id, **user.model_dump())
     database[user_id - 1] = user_with_id
     return user_with_id
 

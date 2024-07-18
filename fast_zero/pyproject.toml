@@ -6,10 +6,17 @@ authors = ["romario lima <romariolima1006@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.12.*"
+python = "3.11.*"
 fastapi = "^0.111.0"
 uvicorn = "^0.30.1"
+sqlalchemy = "^2.0.31"
+pytest = "^8.2.2"
+pydantic-settings = "^2.3.4"
+alembic = "^1.13.2"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
 
 [build-system]
 requires = ["poetry-core"]
