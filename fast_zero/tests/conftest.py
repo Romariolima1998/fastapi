@@ -10,6 +10,7 @@ from fast_zero.models import table_registre
 from fast_zero.database import get_session
 from fast_zero.app import app
 from fast_zero.models import User
+from fast_zero.security import get_password_hash
 
 
 @pytest.fixture()
@@ -41,9 +42,22 @@ def session():
 
 @pytest.fixture
 def user(session: Session):
-    user = User(username='test', email='test@test.com', password='test',)
+    pwd = 'test'
+    user = User(username='test', email='test@test.com',
+                password=get_password_hash(pwd),)
 
     session.add(user)
     session.commit()
     session.refresh(user)
+
+    user.clean_password = pwd
     return user
+
+
+@pytest.fixture
+def token(client, user):
+    response = client.post(
+        '/token/',
+        data={'username': user.username, 'password': user.clean_password},
+    )
+    return response.json()['access_token']
