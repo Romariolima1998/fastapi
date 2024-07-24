@@ -12,14 +12,12 @@ from jwt.exceptions import PyJWTError
 
 from .database import get_session
 from .models import User
+from .settings import Settings
 
-
-SECRET_KEY = 'your-secret-key'
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = PasswordHash.recommended()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
+settings = Settings()
 
 
 def get_password_hash(password: str):
@@ -34,12 +32,13 @@ def create_access_token(data: dict):
     to_encode = data.copy()
 
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
     to_encode.update({'exp': expire})
 
-    encoded_jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORITHM,)
+    encoded_jwt = encode(to_encode, settings.SECRET_KEY,
+                         algorithm=settings.ALGORITHM,)
     return encoded_jwt
 
 
@@ -53,7 +52,8 @@ def get_current_user(
         headers={'WWW-Authenticate': 'Bearer'}
     )
     try:
-        payload = decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        payload = decode(token, settings.SECRET_KEY,
+                         algorithms=settings.ALGORITHM)
         username = payload.get('sub')
         if not username:
             raise credentials_exeption
