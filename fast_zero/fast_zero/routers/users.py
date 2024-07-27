@@ -86,7 +86,7 @@ async def user_detail(user_id: int, session: Session = Depends(get_session)):
 async def update_user(
     user_id: int, user: UserSchema,
     session: Session = Depends(get_session),
-    current_user=Depends(get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     if current_user.id != user_id:
         raise HTTPException(

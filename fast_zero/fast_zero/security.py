@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from pwdlib import PasswordHash
 from jwt import encode, decode
-from jwt.exceptions import PyJWTError
+from jwt.exceptions import PyJWTError, ExpiredSignatureError
 
 from .database import get_session
 from .models import User
@@ -57,6 +57,9 @@ def get_current_user(
         username = payload.get('sub')
         if not username:
             raise credentials_exeption
+
+    except ExpiredSignatureError:
+        raise credentials_exeption
 
     except PyJWTError:
         raise credentials_exeption

@@ -28,7 +28,7 @@ def test_create_user_exception_username_exists(client, user):
     response = client.post(
         '/users/',
         json={
-            'username': 'test',
+            'username': user.username,
             'email': 'test@test.com',
             'password': 'test',
         }
@@ -43,7 +43,7 @@ def test_create_user_exception_email_exists(client, user):
         '/users/',
         json={
             'username': 'test',
-            'email': 'test@test.com',
+            'email': user.email,
             'password': 'test',
         }
     )
@@ -55,7 +55,7 @@ def test_user_detail(client, user):
     user_schema = UserPublic.model_validate(user).model_dump()
 
     response = client.get(
-        '/users/detail/1'
+        f'/users/detail/{user.id}'
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -104,10 +104,10 @@ def test_update_user(client, user, token):
     }
 
 
-def test_exception_update_user_forbidden(client, user, token):
+def test_exception_update_user_forbidden(client, user, other_user, token):
 
     response = client.put(
-        f'/users/{user.id + 1}',
+        f'/users/{other_user.id}',
         headers={'authorization': f'Bearer {token}'},
         json={
             'id': user.id,
@@ -132,9 +132,9 @@ def test_delete_user(client, user, token):
     }
 
 
-def test_exception_delete_user_forbidden(client, user, token):
+def test_exception_delete_user_forbidden(client, user, other_user, token):
     response = client.delete(
-        f'/users/{user.id + 1}',
+        f'/users/{other_user.id}',
         headers={'authorization': f'Bearer {token}'},
     )
 

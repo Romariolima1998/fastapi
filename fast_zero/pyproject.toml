@@ -20,6 +20,8 @@ pyjwt = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
+factory-boy = "^3.3.0"
+freezegun = "^1.5.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -8,8 +8,8 @@ from fast_zero.models import User
 from fast_zero.database import get_session
 from fast_zero.schemas import Token
 from fast_zero.security import (
-    verify_password,
-    create_access_token,
+    verify_password, get_current_user,
+    create_access_token
 )
 
 router = APIRouter(
@@ -38,3 +38,11 @@ async def login_for_access_token(
     access_token = create_access_token(data={'sub': user.email})
 
     return {'access_token': access_token, 'token_type': 'Bearer'}
+
+
+@router.post('/refresh_token', response_model=Token)
+async def refresh_access_token(user: User = Depends(get_current_user)):
+
+    new_access_token = create_access_token(data={'sub': user.email})
+
+    return {'access_token': new_access_token, 'token_type': 'Bearer'}
