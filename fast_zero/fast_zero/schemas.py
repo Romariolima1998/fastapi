@@ -1,6 +1,6 @@
-
-
 from pydantic import BaseModel, EmailStr, ConfigDict
+
+from .models import TodoState
 
 
 class UserSchema(BaseModel):
@@ -31,3 +31,25 @@ class Message(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+# #######################todo###################################
+
+
+class TodoSchema(BaseModel):
+    title: str
+    description: str
+    state: TodoState
+
+
+class TodoPublic(TodoSchema):
+    id: int
+
+
+class TodoList(BaseModel):
+    todos: list[TodoPublic]
+
+
+class TodoUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    state: TodoState | None = None
