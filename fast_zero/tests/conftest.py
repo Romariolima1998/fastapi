@@ -12,6 +12,7 @@ from fast_zero.database import get_session
 from fast_zero.app import app
 from fast_zero.models import User, Todo, TodoState, table_registre
 from fast_zero.security import get_password_hash
+from fast_zero.settings import Settings
 
 
 class UserFactory(factory.Factory):
@@ -46,13 +47,24 @@ def client(session):
 
     app.dependency_overrides.clear()
 
+# with PostgresContainer('postgres:16', driver='psycopg') as postgres:
+#     engine = create_engine(postgres.get_connection_url())
 
-@pytest.fixture()
-def session():
+
+@pytest.fixture(scope='session')
+def engine():
     engine = create_engine(
         'sqlite:///:memory:',
         connect_args={'check_same_thread': False}, poolclass=StaticPool,
     )
+
+    with engine.begin():
+        yield engine
+
+
+@pytest.fixture()
+def session(engine):
+
     table_registre.metadata.create_all(engine)
 
     with Session(engine) as session:
