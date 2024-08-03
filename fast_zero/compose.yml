@@ -12,8 +12,8 @@ services:
   
   fastzero_app:
     image: fastzero_app
-    entrypoint: ./entrypoint.sh
     build: .
+    entrypoint: ./entrypoint.sh
     ports:
       - "8000:8000"
     depends_on:
